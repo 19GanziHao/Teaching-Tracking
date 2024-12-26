@@ -24,7 +24,7 @@ export default [
   },
   {
     path: '/welcome',
-    name: 'welcome',
+    name: 'dashboard.workplace',
     icon: 'smile',
     component: './Welcome',
   },
@@ -42,6 +42,18 @@ export default [
         path: '/admin/sub-page',
         name: 'sub-page',
         component: './Admin',
+      },
+    ],
+  },
+  {
+    path: '/course-management',
+    name: 'course-management',
+    icon: 'form',
+    routes: [
+      {
+        path: '/course-management/create-course',
+        name: 'create-course',
+        component: './CourseManage/CreateCourse',
       },
     ],
   },
