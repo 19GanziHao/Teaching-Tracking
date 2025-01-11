@@ -24,9 +24,34 @@ declare namespace API {
   };
 
   type LoginResult = {
-    status?: string;
-    type?: string;
-    currentAuthority?: string;
+    /** token */
+    token?: string;
+    /** 用户名 */
+    name?: string;
+    /** 邮箱 */
+    email?: string;
+    /** 当前用户的角色权限 目前三种 教师、系统主、院长 */
+    roles?: string[];
+  };
+
+    type LoginResult = {
+      /** token */
+      token?: string;
+      /** 用户名 */
+      name?: string;
+      /** 邮箱 */
+      email?: string;
+      /** 当前用户的角色权限 目前三种 教师、系统主、院长 */
+      roles?: string[];
+    };
+
+  type Result<T> = {
+    /** 返回码 200 success */
+    code?: number;
+    /** 返回内容 */
+    data?: T;
+    /** 错误内容 */
+    message?: string;
   };
 
   type PageParams = {
@@ -62,10 +87,21 @@ declare namespace API {
   };
 
   type LoginParams = {
-    username?: string;
+    /** 邮箱 */
+    email?: string;
+    /** 密码 */
     password?: string;
-    autoLogin?: boolean;
-    type?: string;
+  };
+
+  type RegisterParams = {
+    /** 用户名 */
+    name?: string;
+    /** 邮箱 */
+    email?: string;
+    /** 密码 */
+    password?: string;
+    /** 角色 */
+    role?: string;
   };
 
   type ErrorResponse = {
