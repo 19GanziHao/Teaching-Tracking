@@ -23,10 +23,13 @@ export async function getInitialState(): Promise<{
 }> {
   const fetchUserInfo = async () => {
     try {
-      const msg = await queryCurrentUser({
-        skipErrorHandler: true,
-      });
-      return msg.data;
+      // const msg = await queryCurrentUser({
+      //   skipErrorHandler: true,
+      // });
+      // return msg.data;
+      return {
+        name: '甘梓豪'
+      }
     } catch (error) {
       history.push(loginPath);
     }

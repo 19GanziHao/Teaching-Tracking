@@ -1,17 +1,11 @@
 import { Footer } from '@/components';
-import { login } from '@/services/ant-design-pro/api';
-import { getFakeCaptcha } from '@/services/ant-design-pro/login';
 import {
-  AlipayCircleOutlined,
   LockOutlined,
-  MobileOutlined,
-  TaobaoCircleOutlined,
+  MailOutlined,
   UserOutlined,
-  WeiboCircleOutlined,
 } from '@ant-design/icons';
 import {
   LoginForm,
-  ProFormCaptcha,
   ProFormCheckbox,
   ProFormText,
 } from '@ant-design/pro-components';
@@ -21,6 +15,8 @@ import { createStyles } from 'antd-style';
 import React, { useState } from 'react';
 import { flushSync } from 'react-dom';
 import Settings from '../../../../config/defaultSettings';
+import { login, register } from '@/services/user';
+// import { App } from 'antd';
 
 const useStyles = createStyles(({ token }) => {
   return {
@@ -58,18 +54,6 @@ const useStyles = createStyles(({ token }) => {
   };
 });
 
-const ActionIcons = () => {
-  const { styles } = useStyles();
-
-  return (
-    <>
-      <AlipayCircleOutlined key="AlipayCircleOutlined" className={styles.action} />
-      <TaobaoCircleOutlined key="TaobaoCircleOutlined" className={styles.action} />
-      <WeiboCircleOutlined key="WeiboCircleOutlined" className={styles.action} />
-    </>
-  );
-};
-
 const Lang = () => {
   const { styles } = useStyles();
 
@@ -80,7 +64,7 @@ const Lang = () => {
   );
 };
 
-const LoginMessage: React.FC<{
+const LoginOrRegisterMessage: React.FC<{
   content: string;
 }> = ({ content }) => {
   return (
@@ -96,14 +80,18 @@ const LoginMessage: React.FC<{
 };
 
 const Login: React.FC = () => {
-  const [userLoginState, setUserLoginState] = useState<API.LoginResult>({});
-  const [type, setType] = useState<string>('account');
+  const [userLoginState, setUserLoginState] = useState<API.Result<API.LoginResult>>({message: ''});
+  const [userRegisterState, setUserRegisterState] = useState<API.Result<void>>({message: ''});
+  const [type, setType] = useState<string>('login');
   const { initialState, setInitialState } = useModel('@@initialState');
   const { styles } = useStyles();
   const intl = useIntl();
+  // const { message } = App.useApp();
+
 
   const fetchUserInfo = async () => {
     const userInfo = await initialState?.fetchUserInfo?.();
+    console.log(userInfo, 'fetchUserInfo');
     if (userInfo) {
       flushSync(() => {
         setInitialState((s) => ({
@@ -114,35 +102,61 @@ const Login: React.FC = () => {
     }
   };
 
-  const handleSubmit = async (values: API.LoginParams) => {
+  /** 登录 */
+  const handleLogin = async (values: API.LoginParams) => {
     try {
       // 登录
-      const msg = await login({ ...values, type });
-      if (msg.status === 'ok') {
+      const resp = await login({ email: values.email, password: values.password });
+      if (resp.code === 200) {
         const defaultLoginSuccessMessage = intl.formatMessage({
           id: 'pages.login.success',
           defaultMessage: '登录成功！',
         });
-        message.success(defaultLoginSuccessMessage);
+        message.success({content: defaultLoginSuccessMessage})
+        // message.success(defaultLoginSuccessMessage);
         await fetchUserInfo();
         const urlParams = new URL(window.location.href).searchParams;
         history.push(urlParams.get('redirect') || '/');
         return;
       }
-      console.log(msg);
       // 如果失败去设置用户错误信息
-      setUserLoginState(msg);
+      setUserLoginState(resp);
+      
     } catch (error) {
       const defaultLoginFailureMessage = intl.formatMessage({
         id: 'pages.login.failure',
         defaultMessage: '登录失败，请重试！',
       });
-      console.log(error);
+        message.error(defaultLoginFailureMessage);
+      // message.error(defaultLoginFailureMessage);
+    }
+  }
+  /** 注册 */
+  const handleRegister = async (values: API.RegisterParams) => {
+    try {
+      // 登录
+      const resp = await register({ name: values.name, email: values.email, password: values.password, role: 'teacher' });
+      if (resp.code === 200) {
+        const defaultLoginSuccessMessage = intl.formatMessage({
+          id: 'pages.register.success',
+          defaultMessage: '注册成功！',
+        });
+        message.success(defaultLoginSuccessMessage);
+        return;
+      }
+      // 如果失败去设置用户错误信息
+      setUserRegisterState(resp);
+    } catch (error) {
+      const defaultLoginFailureMessage = intl.formatMessage({
+        id: 'pages.register.failure',
+        defaultMessage: '注册失败，请重试！',
+      });
       message.error(defaultLoginFailureMessage);
     }
-  };
-  const { status, type: loginType } = userLoginState;
+  }
 
+  const { message: loginMsg } = userLoginState;
+  const { message: registerMsg } = userRegisterState;
   return (
     <div className={styles.container}>
       <Helmet>
@@ -167,21 +181,18 @@ const Login: React.FC = () => {
             maxWidth: '75vw',
           }}
           logo={<img alt="logo" src="/logo.svg" />}
-          title="Ant Design"
+          title="高校教师教学进度跟踪与管理系统"
           subTitle={intl.formatMessage({ id: 'pages.layouts.userLayout.title' })}
           initialValues={{
             autoLogin: true,
           }}
-          actions={[
-            <FormattedMessage
-              key="loginWith"
-              id="pages.login.loginWith"
-              defaultMessage="其他登录方式"
-            />,
-            <ActionIcons key="icons" />,
-          ]}
           onFinish={async (values) => {
-            await handleSubmit(values as API.LoginParams);
+            console.log('已完成: ', values, type);
+            if (type === 'login') {
+              await handleLogin(values);
+            } else {
+              await handleRegister(values);
+            }
           }}
         >
           <Tabs
@@ -190,41 +201,41 @@ const Login: React.FC = () => {
             centered
             items={[
               {
-                key: 'account',
+                key: 'login',
                 label: intl.formatMessage({
                   id: 'pages.login.accountLogin.tab',
-                  defaultMessage: '账户密码登录',
+                  defaultMessage: '邮箱密码登录',
                 }),
               },
               {
-                key: 'mobile',
+                key: 'register',
                 label: intl.formatMessage({
                   id: 'pages.login.phoneLogin.tab',
-                  defaultMessage: '手机号登录',
+                  defaultMessage: '邮箱注册',
                 }),
               },
             ]}
           />
-
-          {status === 'error' && loginType === 'account' && (
-            <LoginMessage
+          {/* 登录失败 */}
+          {loginMsg && (
+            <LoginOrRegisterMessage
               content={intl.formatMessage({
                 id: 'pages.login.accountLogin.errorMessage',
-                defaultMessage: '账户或密码错误(admin/ant.design)',
+                defaultMessage: '账户或密码错误',
               })}
             />
           )}
-          {type === 'account' && (
+          {type === 'login' && (
             <>
               <ProFormText
-                name="username"
-                fieldProps={{
+                name="email"
+                fieldProps={  {
                   size: 'large',
-                  prefix: <UserOutlined />,
+                  prefix: <MailOutlined />,
                 }}
                 placeholder={intl.formatMessage({
                   id: 'pages.login.username.placeholder',
-                  defaultMessage: '用户名: admin or user',
+                  defaultMessage: '邮箱',
                 })}
                 rules={[
                   {
@@ -232,7 +243,7 @@ const Login: React.FC = () => {
                     message: (
                       <FormattedMessage
                         id="pages.login.username.required"
-                        defaultMessage="请输入用户名!"
+                        defaultMessage="请输入邮箱!"
                       />
                     ),
                   },
@@ -246,7 +257,7 @@ const Login: React.FC = () => {
                 }}
                 placeholder={intl.formatMessage({
                   id: 'pages.login.password.placeholder',
-                  defaultMessage: '密码: ant.design',
+                  defaultMessage: '密码',
                 })}
                 rules={[
                   {
@@ -262,86 +273,82 @@ const Login: React.FC = () => {
               />
             </>
           )}
-
-          {status === 'error' && loginType === 'mobile' && <LoginMessage content="验证码错误" />}
-          {type === 'mobile' && (
+          {/* 可以加一个注册失败的alert */}
+          {registerMsg && (
+            <LoginOrRegisterMessage
+              content={intl.formatMessage({
+                id: 'pages.login.accountLogin.errorMessage',
+                defaultMessage: '账户或密码错误',
+              })}
+            />
+          )}
+          {type === 'register' && (
             <>
               <ProFormText
                 fieldProps={{
                   size: 'large',
-                  prefix: <MobileOutlined />,
+                  prefix: <UserOutlined />,
                 }}
-                name="mobile"
+                name="name"
                 placeholder={intl.formatMessage({
-                  id: 'pages.login.phoneNumber.placeholder',
-                  defaultMessage: '手机号',
+                  id: 'pages.register.name.placeholder',
+                  defaultMessage: '用户名',
                 })}
                 rules={[
                   {
                     required: true,
                     message: (
                       <FormattedMessage
-                        id="pages.login.phoneNumber.required"
-                        defaultMessage="请输入手机号！"
+                        id="pages.register.name.required"
+                        defaultMessage="请输入用户名！"
                       />
                     ),
-                  },
-                  {
-                    pattern: /^1\d{10}$/,
-                    message: (
-                      <FormattedMessage
-                        id="pages.login.phoneNumber.invalid"
-                        defaultMessage="手机号格式错误！"
-                      />
-                    ),
-                  },
+                  }
                 ]}
               />
-              <ProFormCaptcha
+              <ProFormText
+                fieldProps={{
+                  size: 'large',
+                  prefix: <MailOutlined />,
+                }}
+                name="email"
+                placeholder={intl.formatMessage({
+                  id: 'pages.register.email.placeholder',
+                  defaultMessage: '邮箱',
+                })}
+                rules={[
+                  {
+                    required: true,
+                    message: (
+                      <FormattedMessage
+                        id="pages.register.email.required"
+                        defaultMessage="请输入邮箱！"
+                      />
+                    ),
+                  }
+                ]}
+              />
+              <ProFormText.Password
                 fieldProps={{
                   size: 'large',
                   prefix: <LockOutlined />,
                 }}
-                captchaProps={{
-                  size: 'large',
-                }}
+                name="password"
                 placeholder={intl.formatMessage({
-                  id: 'pages.login.captcha.placeholder',
-                  defaultMessage: '请输入验证码',
+                  id: 'pages.register.password.placeholder',
+                  defaultMessage: '密码',
                 })}
-                captchaTextRender={(timing, count) => {
-                  if (timing) {
-                    return `${count} ${intl.formatMessage({
-                      id: 'pages.getCaptchaSecondText',
-                      defaultMessage: '获取验证码',
-                    })}`;
-                  }
-                  return intl.formatMessage({
-                    id: 'pages.login.phoneLogin.getVerificationCode',
-                    defaultMessage: '获取验证码',
-                  });
-                }}
-                name="captcha"
                 rules={[
                   {
                     required: true,
                     message: (
                       <FormattedMessage
-                        id="pages.login.captcha.required"
-                        defaultMessage="请输入验证码！"
+                        id="pages.register.password.required"
+                        defaultMessage="请输入密码！"
                       />
                     ),
-                  },
-                ]}
-                onGetCaptcha={async (phone) => {
-                  const result = await getFakeCaptcha({
-                    phone,
-                  });
-                  if (!result) {
-                    return;
                   }
-                  message.success('获取验证码成功！验证码为：1234');
-                }}
+                ]}
               />
             </>
           )}
@@ -353,13 +360,13 @@ const Login: React.FC = () => {
             <ProFormCheckbox noStyle name="autoLogin">
               <FormattedMessage id="pages.login.rememberMe" defaultMessage="自动登录" />
             </ProFormCheckbox>
-            <a
+            {/* <a
               style={{
                 float: 'right',
               }}
             >
               <FormattedMessage id="pages.login.forgotPassword" defaultMessage="忘记密码" />
-            </a>
+            </a> */}
           </div>
         </LoginForm>
       </div>
