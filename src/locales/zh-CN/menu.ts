@@ -51,4 +51,5 @@ export default {
   'menu.editor.koni': '拓扑编辑器',
   'menu.course-management': '课程管理',
   'menu.course-management.create-course': '新建课程表',
+  'menu.course-management.select-course': '查询课程表',
 };

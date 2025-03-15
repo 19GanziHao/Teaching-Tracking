@@ -15,3 +15,11 @@ export async function register(body: API.RegisterParams) {
     data: body,
   });
 }
+
+/** 退出接口 */
+export async function outLogin() {
+  // 移除 token
+  localStorage.removeItem('TOKEN');
+  // 移除用户信息
+  localStorage.removeItem('userInfo');
+}

@@ -22,7 +22,7 @@ export default {
   'pages.register.failure': '注册失败，请重试！',
   'pages.register.success': '注册成功！',
   'pages.getCaptchaSecondText': '秒后重新获取',
-  'pages.login.rememberMe': '自动登录',
+  'pages.login.rememberMe': '记住我',
   'pages.login.forgotPassword': '忘记密码 ?',
   'pages.login.submit': '登录',
   'pages.login.loginWith': '其他登录方式 :',

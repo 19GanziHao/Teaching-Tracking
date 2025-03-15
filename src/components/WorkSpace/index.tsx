@@ -6,18 +6,17 @@ import { Link, useModel } from '@umijs/max';
 
 const PageHeaderContent: FC = () => {
   const { styles } = useStyles();
-  const [userInfo, setUserInfo] = useState({});
+  const [userInfo, setUserInfo] = useState<API.LoginResult>({});
   const loading = true; // TODO: 需改为动态
-  const { initialState, setInitialState } = useModel('@@initialState');
+  const { initialState } = useModel('@@initialState');
 
   useEffect(() => {
     (async function () {
       const user = await initialState?.fetchUserInfo?.();
       console.log(user);
       setUserInfo({ ...user });
-    })()
-
-  })
+    })();
+  }, []);
   if (!loading) {
     return (
       <Skeleton
@@ -39,7 +38,7 @@ const PageHeaderContent: FC = () => {
         />
       </div>
       <div className={styles.content}>
-        <div className={styles.contentTitle}>早安，{ userInfo.name }，祝你开心每一天！</div>
+        <div className={styles.contentTitle}>早安，{userInfo.name}，祝你开心每一天！</div>
         <div>交互专家 |蚂蚁金服－某某某事业群－某某平台部－某某技术部－UED</div>
       </div>
     </div>

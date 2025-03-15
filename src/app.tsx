@@ -1,13 +1,12 @@
-import { AvatarDropdown, AvatarName, Footer, Question, SelectLang } from '@/components';
-import { currentUser as queryCurrentUser } from '@/services/ant-design-pro/api';
-import { LinkOutlined } from '@ant-design/icons';
-import type { Settings as LayoutSettings } from '@ant-design/pro-components';
-import { SettingDrawer } from '@ant-design/pro-components';
-import type { RunTimeLayoutConfig } from '@umijs/max';
-import { history, Link } from '@umijs/max';
 import React from 'react';
-import defaultSettings from '../config/defaultSettings';
+import { history, Link } from '@umijs/max';
+import { LinkOutlined } from '@ant-design/icons';
+import { SettingDrawer } from '@ant-design/pro-components';
 import { errorConfig } from './requestErrorConfig';
+import defaultSettings from '../config/defaultSettings';
+import { AvatarDropdown, AvatarName, Footer, Question, SelectLang } from '@/components';
+import type { Settings as LayoutSettings } from '@ant-design/pro-components';
+import type { RunTimeLayoutConfig } from '@umijs/max';
 
 const isDev = process.env.NODE_ENV === 'development';
 const loginPath = '/user/login';
@@ -23,12 +22,9 @@ export async function getInitialState(): Promise<{
 }> {
   const fetchUserInfo = async () => {
     try {
-      // const msg = await queryCurrentUser({
-      //   skipErrorHandler: true,
-      // });
-      // return msg.data;
-      return {
-        name: '甘梓豪'
+      const userInfo = JSON.parse(localStorage.getItem('userInfo') as string) || '';
+      if (userInfo) {
+        return userInfo;
       }
     } catch (error) {
       history.push(loginPath);

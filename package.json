@@ -45,6 +45,7 @@
     "antd-style": "^3.7.0",
     "classnames": "^2.5.1",
     "dayjs": "^1.11.13",
+    "dnd-kit": "^0.0.2",
     "exceljs": "^4.4.0",
     "file-saver": "^2.0.5",
     "querystring": "^0.2.1",

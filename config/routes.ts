@@ -55,6 +55,11 @@ export default [
         name: 'create-course',
         component: './CourseManage/CreateCourse',
       },
+      {
+        path: '/course-management/course',
+        name: 'select-course',
+        component: './CourseManage/SelectCourse',
+      },
     ],
   },
   {
