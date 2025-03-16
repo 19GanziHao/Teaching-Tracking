@@ -99,7 +99,6 @@ export const errorConfig: RequestConfig = {
     (response) => {
       // 拦截响应数据，进行个性化处理
       const { data } = response as unknown as ResponseStructure;
-      console.log(data.code, response);
       // 200 代表成功 ，其他代表失败
       if (data?.code !== 200) {
         message.error('请求失败，请重试');
@@ -109,7 +108,6 @@ export const errorConfig: RequestConfig = {
     // 一个二元组，第一个元素是 request 拦截器，第二个元素是错误处理
     [
       (response) => {
-        console.log(response, '第一个');
         return response;
       },
       ({ response }: any) => {
@@ -119,7 +117,6 @@ export const errorConfig: RequestConfig = {
           localStorage.removeItem('userInfo');
           history.push('/user/login');
         }
-        console.log('err', response.status);
         return Promise.reject(response);
       },
     ],

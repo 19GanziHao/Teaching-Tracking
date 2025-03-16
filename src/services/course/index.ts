@@ -1,14 +1,21 @@
 import { request } from '@umijs/max';
 
+function getUser() {
+  return JSON.parse(localStorage.getItem('userInfo') || '');
+}
 /**
  * 创建课程
  * @param body API.CreateCourseParams
  * @returns void
  */
 export async function createCourse(body: API.CreateCourseParams) {
+  const user = getUser();
   return request<API.Result<void>>('/api/course', {
     method: 'POST',
-    data: body,
+    data: {
+      ...body,
+      userId: user.userId,
+    },
   });
 }
 
@@ -18,9 +25,13 @@ export async function createCourse(body: API.CreateCourseParams) {
  * @returns T
  */
 export async function findCourse<T>(params: API.FindCourseParams) {
+  const user = getUser();
   return request<API.Result<T>>('/api/course', {
     method: 'GET',
-    params,
+    params: {
+      ...params,
+      userId: user.userId,
+    },
   });
 }
 
@@ -54,7 +65,9 @@ export async function updateCourse(id: number, body: API.CreateCourseParams) {
  * @returns
  */
 export async function deleteCourse(id: number) {
+  const user = getUser();
   return request<API.Result<void>>(`/api/course/${id}`, {
     method: 'DELETE',
+    data: { userId: user.userId },
   });
 }
