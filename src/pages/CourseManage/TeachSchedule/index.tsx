@@ -13,7 +13,7 @@ import {
   verticalListSortingStrategy,
 } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
-import { Button, InputNumber } from 'antd';
+import { Button, InputNumber, Tag } from 'antd';
 
 interface RowContextProps {
   setActivatorNodeRef?: (element: HTMLElement | null) => void;
@@ -131,7 +131,7 @@ const TeachSchedule: React.FC<TeachScheduleProps> = ({
     {
       title: '校历周次',
       dataIndex: 'calendarWeek',
-      width: '7%',
+      width: '10%',
     },
     {
       title: '学时数',
@@ -224,7 +224,30 @@ const TeachSchedule: React.FC<TeachScheduleProps> = ({
     {
       title: '执行情况',
       dataIndex: 'executionStatus',
-      width: '8%',
+      width: '15%',
+      valueType: 'select',
+      fieldProps: {
+        allowClear: false, // 隐藏清除按钮
+      },
+      valueEnum: {
+        已完成: { text: '已完成', status: 'Success' },
+        进行中: { text: '进行中', status: 'Processing' },
+        未开始: { text: '未开始', status: 'Default' },
+        已取消: { text: '已取消', status: 'Error' },
+      },
+      render: (_, { executionStatus = '未开始' }) => {
+        const statusColorMap = {
+          已完成: 'success',
+          进行中: 'processing',
+          未开始: 'default',
+          已取消: 'error',
+        };
+        return (
+          <Tag color={statusColorMap[executionStatus as keyof typeof statusColorMap]}>
+            {executionStatus}
+          </Tag>
+        );
+      },
     },
     {
       title: '备注',
@@ -280,7 +303,7 @@ const TeachSchedule: React.FC<TeachScheduleProps> = ({
             components={{ body: { row: Row } }}
             rowKey="id"
             bordered
-            sticky
+            // sticky
             headerTitle="课表"
             scroll={{
               x: 1200,

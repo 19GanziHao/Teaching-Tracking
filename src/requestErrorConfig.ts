@@ -108,7 +108,6 @@ export const errorConfig: RequestConfig = {
     // 一个二元组，第一个元素是 request 拦截器，第二个元素是错误处理
     [
       (response) => {
-        console.log(response, '第一个');
         return response;
       },
       ({ response }: any) => {
@@ -118,7 +117,6 @@ export const errorConfig: RequestConfig = {
           localStorage.removeItem('userInfo');
           history.push('/user/login');
         }
-        console.log('err', response.status);
         return Promise.reject(response);
       },
     ],

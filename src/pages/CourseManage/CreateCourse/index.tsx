@@ -137,7 +137,6 @@ export default function CreateCourse() {
         <StepsForm
           onFinish={async (values: CourseType) => {
             const result = { ...values, course: dataSource };
-            console.log(result);
             const params = handleParams(result);
             await createCourse(params);
             message.success('提交成功');
@@ -145,8 +144,7 @@ export default function CreateCourse() {
         >
           <StepsForm.StepForm
             title="进度计划表概述"
-            onFinish={async (values) => {
-              console.log(values, '进度计划表概述');
+            onFinish={async () => {
               return true;
             }}
           >
