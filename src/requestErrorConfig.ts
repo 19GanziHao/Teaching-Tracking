@@ -99,7 +99,6 @@ export const errorConfig: RequestConfig = {
     (response) => {
       // 拦截响应数据，进行个性化处理
       const { data } = response as unknown as ResponseStructure;
-      console.log(data.code, response);
       // 200 代表成功 ，其他代表失败
       if (data?.code !== 200) {
         message.error('请求失败，请重试');

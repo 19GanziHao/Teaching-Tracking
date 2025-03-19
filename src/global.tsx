@@ -86,6 +86,5 @@ if (pwa) {
   serviceWorker.getRegistration().then((sw) => {
     if (sw) sw.unregister();
   });
-
   clearCache();
 }

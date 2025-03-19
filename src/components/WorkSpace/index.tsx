@@ -3,6 +3,7 @@ import { Avatar, Card, Col, Row, Skeleton, Statistic } from 'antd';
 import useStyles from './style.style';
 import { PageContainer } from '@ant-design/pro-components';
 import { Link, useModel } from '@umijs/max';
+import CurrentCourses from '@/components/WorkSpaceSon/CurrentCourses';
 
 const PageHeaderContent: FC = () => {
   const { styles } = useStyles();
@@ -74,10 +75,7 @@ const WorkSpace: React.FC = () => {
               marginBottom: 24,
             }}
           >
-            123
-          </Card>
-          <Card title="动态" bordered={false}>
-            456
+            <CurrentCourses />
           </Card>
         </Col>
         <Col xl={8} lg={24} md={24} sm={24} xs={24}>

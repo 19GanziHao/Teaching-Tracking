@@ -58,3 +58,13 @@ export async function deleteCourse(id: number) {
     method: 'DELETE',
   });
 }
+
+/**
+ * 获取正在进行的课程列表
+ */
+
+export async function getCurrentCourseList<T>() {
+  return request<API.Result<T>>(`/api/course/perform`, {
+    method: 'GET',
+  });
+}

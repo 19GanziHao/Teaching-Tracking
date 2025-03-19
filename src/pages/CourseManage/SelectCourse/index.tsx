@@ -1,4 +1,4 @@
-import { useEffect, useState, useRef } from 'react';
+import { useEffect, useState } from 'react';
 import { PageContainer, ProTable } from '@ant-design/pro-components';
 import { Button, Card, Col, Popconfirm, Row, Space, Spin, message } from 'antd';
 import dayjs from 'dayjs';
@@ -9,28 +9,28 @@ import CourseEdit from './CourseEdit';
 import { deleteCourse, findCourse, findCourseById, updateCourse } from '@/services/course';
 
 // 添加 LoadMore 组件  在最下面加了一个div元素 然后就监听div元素是否可见，因此去判断是否到底部了
-const LoadMore = ({ onLoadMore }: { onLoadMore: () => void }) => {
-  const loadMoreRef = useRef(null);
+// const LoadMore = ({ onLoadMore }: { onLoadMore: () => void }) => {
+//   const loadMoreRef = useRef(null);
 
-  useEffect(() => {
-    const observer = new IntersectionObserver(
-      (entries) => {
-        if (entries[0].isIntersecting) {
-          onLoadMore();
-        }
-      },
-      { threshold: 0.1 },
-    );
+//   useEffect(() => {
+//     const observer = new IntersectionObserver(
+//       (entries) => {
+//         if (entries[0].isIntersecting) {
+//           onLoadMore();
+//         }
+//       },
+//       { threshold: 0.1 },
+//     );
 
-    if (loadMoreRef.current) {
-      observer.observe(loadMoreRef.current);
-    }
+//     if (loadMoreRef.current) {
+//       observer.observe(loadMoreRef.current);
+//     }
 
-    return () => observer.disconnect();
-  }, [onLoadMore]);
+//     return () => observer.disconnect();
+//   }, [onLoadMore]);
 
-  return <div ref={loadMoreRef} style={{ height: '20px' }} />;
-};
+//   return <div ref={loadMoreRef} style={{ height: '20px' }} />;
+// };
 
 export default function SelectCourse() {
   const [selectedCourse, setSelectedCourse] = useState<CourseVo>({});
@@ -199,7 +199,7 @@ export default function SelectCourse() {
         tableRender={() => (
           <>
             {renderCourseCards(dataSource)}
-            {hasMore && !loading && <LoadMore onLoadMore={() => setPageNum((prev) => prev + 1)} />}
+            {/* {hasMore && !loading && <LoadMore onLoadMore={() => setPageNum((prev) => prev + 1)} />} */}
             {loading && (
               <div style={{ textAlign: 'center', padding: '24px' }}>
                 <Spin size="large" />
