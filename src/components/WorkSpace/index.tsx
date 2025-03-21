@@ -73,6 +73,7 @@ const WorkSpace: React.FC = () => {
             bordered={false}
             style={{
               marginBottom: 24,
+              width: '90%',
             }}
           >
             <CurrentCourses />
